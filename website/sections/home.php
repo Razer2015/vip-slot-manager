@@ -43,6 +43,7 @@ $settings['left'] = '
 						<th>Status</th>
 						<th>Changelog</th>
 						<th>Comment</th>
+						<th>DiscordId</th>
 					</tr>
 				</thead>
 

@@ -50,8 +50,8 @@ class User {
 	$this->db->execute('SET character_set_results = utf8');
 	$this->db->execute('SET character_set_connection = utf8');
 							
-		$sql = "SELECT * FROM vsm_tUser
-				WHERE id = (SELECT userID FROM vsm_tBrowserSessions WHERE
+		$sql = "SELECT * FROM vsm_tuser
+				WHERE id = (SELECT userID FROM vsm_tbrowsersessions WHERE
 							sessionID='".$this->sessionID."');";
 
 		$dbr = $this->db->query($sql);
@@ -97,13 +97,13 @@ class User {
 		if ($erg == '') if ($pw == '') $erg = 'err_nopw';
 		
 		if ($erg == '') {
-			$sql = "SELECT id FROM vsm_tUser WHERE email='".$email."';";
+			$sql = "SELECT id FROM vsm_tuser WHERE email='".$email."';";
 			$dbr = $this->db->query($sql);
 			if ($dbr->getCount() == 0) {
 				$salt = $this->makeSalt();			
 				$pwadd = md5($pw.$salt);			
 				
-				$sql = "INSERT INTO vsm_tUser (email, password, salt, rights)
+				$sql = "INSERT INTO vsm_tuser (email, password, salt, rights)
 					VALUES ('".$email."', '".$pwadd."', '".$salt."', ".$rights.");";
 				
 				$this->db->execute($sql);
@@ -122,7 +122,7 @@ class User {
 		$erg = '';
 		
 		
-		$sql = "SELECT * FROM vsm_tUser WHERE email='".$email."';";
+		$sql = "SELECT * FROM vsm_tuser WHERE email='".$email."';";
 		$dbr = $this->db->query($sql);
 
 		if ($dbr->getCount() > 0) {
@@ -138,7 +138,7 @@ class User {
 				$salt = $this->makeSalt();			
 				$pwadd = md5($pw.$salt);			
 			} else {				
-				$sql = "SELECT salt, password FROM vsm_tUser WHERE id=".$id.";";
+				$sql = "SELECT salt, password FROM vsm_tuser WHERE id=".$id.";";
 				$dbr = $this->db->query($sql);
 				$row = $dbr->rewind();
 				$salt = $row['salt'];
@@ -148,7 +148,7 @@ class User {
 			}
 		}		
 		if ($erg == '') {			
-			$sql = "UPDATE vsm_tUser SET email='".$email."', password='".$pwadd."',
+			$sql = "UPDATE vsm_tuser SET email='".$email."', password='".$pwadd."',
 						salt='".$salt."', rights=".$rights." WHERE id=".$id.";";
 			$this->db->execute($sql);
 			$erg = 'ok';
@@ -177,13 +177,13 @@ class User {
 		}
 		
 		// Ist die Session gesperrt?
-		$sql = "SELECT IFNULL(lockedUntil,0) AS lockedUntil FROM vsm_tBrowserSessions WHERE sessionID='".$this->sessionID."';";
+		$sql = "SELECT IFNULL(lockedUntil,0) AS lockedUntil FROM vsm_tbrowsersessions WHERE sessionID='".$this->sessionID."';";
 		$dbr = $this->db->query($sql);
 		$row = $dbr->rewind();
 		if ($row['lockedUntil'] >= time()) $err = 'login&BLOCKED;';
 		
 		// Existiert der Benutzer?
-		$sql = "SELECT id, email, password, salt from vsm_tUser
+		$sql = "SELECT id, email, password, salt from vsm_tuser
 				WHERE email='".$email."';";		
 				
 		$dbr = $this->db->query($sql);
@@ -199,13 +199,13 @@ class User {
 				if (($row['password'] == md5($pw.$row['salt']))) {
 				
 					// Pruefen, ob Benutzer bereits angemeldet ist:
-//					$sql = "UPDATE vsm_tBrowserSessions SET userID = NULL WHERE userID=".$row['id'].";";
+//					$sql = "UPDATE vsm_tbrowsersessions SET userID = NULL WHERE userID=".$row['id'].";";
 	//				$this->db->execute($sql);
 
 	//				if ($err == '') {
 					
 						// Status auf Login-setzen:
-						$sql = "UPDATE vsm_tBrowserSessions SET userID=".$row['id'].", error='' WHERE sessionID='".$this->sessionID."';";
+						$sql = "UPDATE vsm_tbrowsersessions SET userID=".$row['id'].", error='' WHERE sessionID='".$this->sessionID."';";
 						$this->db->execute($sql);
 					
 		//			}
@@ -226,7 +226,7 @@ class User {
 		// Eventuell Fehler speichern:
 		if ($err != '') {
 			$err .= '-'.$email;
-			$sql = "UPDATE vsm_tBrowserSessions SET error='".$err."', lockedUntil = ".(time()+ 5).", 
+			$sql = "UPDATE vsm_tbrowsersessions SET error='".$err."', lockedUntil = ".(time()+ 5).", 
 					userID = NULL where sessionID='".$this->sessionID."';";
 			$this->db->execute($sql);
 		}
@@ -241,7 +241,7 @@ class User {
 	* @return true, wenn der Benutzer eingeloggt ist, false sonst
 	*/
 	function loggedIn() {
-		$sql = "SELECT userID FROM vsm_tBrowserSessions WHERE sessionID='".$this->sessionID."';";
+		$sql = "SELECT userID FROM vsm_tbrowsersessions WHERE sessionID='".$this->sessionID."';";
 		$dbr = $this->db->query($sql);
 		$row = $dbr->rewind();		
 		return (isset($row['userID']));
@@ -253,7 +253,7 @@ class User {
 	function logout() {
 		
 		// Benutzer ausloggen:
-		$sql = "DELETE FROM vsm_tBrowserSessions WHERE sessionID='".$this->sessionID."';";
+		$sql = "DELETE FROM vsm_tbrowsersessions WHERE sessionID='".$this->sessionID."';";
 		
 		$this->db->execute($sql);
 		
@@ -274,7 +274,7 @@ class User {
 	function clearError() {
 
 		// Fehler entfernen:
-		$sql = "UPDATE vsm_tBrowserSessions SET error=null WHERE
+		$sql = "UPDATE vsm_tbrowsersessions SET error=null WHERE
 				sessionID='".$this->sessionID."';";
 		$this->db->execute($sql);
 
@@ -302,7 +302,7 @@ class User {
 	function getErrorString() {
 
 		// Fehlerstring ermitteln:
-		$sql = "SELECT error FROM vsm_tBrowserSessions WHERE 
+		$sql = "SELECT error FROM vsm_tbrowsersessions WHERE 
 				sessionID='".$this->sessionID."';";
 
 		$dbr = $this->db->query($sql);
@@ -336,7 +336,7 @@ class User {
 	* @return Filter (String-Array)
 	*/
 	function getFilter() {
-		$sql = "SELECT * FROM vsm_tFilter WHERE userID = ".$this->row['id'].";";
+		$sql = "SELECT * FROM vsm_tfilter WHERE userID = ".$this->row['id'].";";
 		$dbr = $this->db->query($sql);
 		
 		$erg = array();
@@ -362,7 +362,7 @@ class User {
 		if ($noperm == "a") $tmp_server = $server."y";
 		if (($noexpired == "a") && ($noperm == "a")) $tmp_server = $server."z";
 		
-		$sql = "DELETE FROM vsm_tFilter WHERE server = '".$tmp_server."' AND gruppe = '".$gruppe."' AND userID = ".$this->row['id'].";";
+		$sql = "DELETE FROM vsm_tfilter WHERE server = '".$tmp_server."' AND gruppe = '".$gruppe."' AND userID = ".$this->row['id'].";";
 		$this->db->execute($sql);
 	}
 
@@ -377,18 +377,18 @@ class User {
 		if ($noexpired == "a") $tmp_server = $server."x";
 		if ($noperm == "a") $tmp_server = $server."y";
 		if (($noexpired == "a") && ($noperm == "a")) $tmp_server = $server."z";
-		$sql = "SELECT id FROM vsm_tFilter WHERE server = '".$tmp_server."' AND gruppe = '".$gruppe."' AND userID = ".$this->row['id'].";";
+		$sql = "SELECT id FROM vsm_tfilter WHERE server = '".$tmp_server."' AND gruppe = '".$gruppe."' AND userID = ".$this->row['id'].";";
 		$dbr = $this->db->query($sql);
 		if ($dbr->getCount() > 0) {
 			$err = 1;
 		} else {
 			
-			$sql = "SELECT id FROM vsm_tFilter WHERE userID = ".$this->row['id'].";";
+			$sql = "SELECT id FROM vsm_tfilter WHERE userID = ".$this->row['id'].";";
 			$dbr = $this->db->query($sql);
 			if ($dbr->getCount() > 10) {
 				$err = 2;
 			} else {
-				$sql = "INSERT INTO vsm_tFilter (server, gruppe, userID) VALUES ('".$tmp_server."', '".$gruppe."',".$this->row['id'].");";
+				$sql = "INSERT INTO vsm_tfilter (server, gruppe, userID) VALUES ('".$tmp_server."', '".$gruppe."',".$this->row['id'].");";
 				$this->db->execute($sql);
 			}		
 		}

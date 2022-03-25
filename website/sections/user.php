@@ -17,7 +17,7 @@ if ($user->getRights() != 0) {
 	
 
 	if ($id > -1) {
-	$sql = "SELECT id FROM vsm_tUser WHERE id = ".$id.";";
+	$sql = "SELECT id FROM vsm_tuser WHERE id = ".$id.";";
 	$dbr = $db->query($sql);
 	if ($dbr->getCount() == 0) $id = -1;
 	unset($dbr);
@@ -32,7 +32,7 @@ $edit = ($id > -1);
 $values['timestamp'] = 'currentdate';
 $values['comment'] = '';
 if ($edit) {
-	$sql = "SELECT * FROM vsm_tUser WHERE id = ".$id.";";
+	$sql = "SELECT * FROM vsm_tuser WHERE id = ".$id.";";
 	$dbr = $db->query($sql);
 	$row = $dbr->rewind();
 	

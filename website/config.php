@@ -1,5 +1,8 @@
 <?php
 
+require_once('dotEnv.php');
+
+(new DotEnv(__DIR__ . '/.env'))->load();
 //ini_set('display_errors', 1);
 //ini_set('display_startup_errors', 1);
 //error_reporting(E_ALL);
@@ -8,10 +11,10 @@
 
 // SETTINGS - SQL LOGIN DETAILS:
 
-$settings['server'] = 'xxxxxxxxxxxxxxxxx';
-$settings['dbName'] = 'xxxxxxxxxxxxxxxxx';
-$settings['dbUser'] = 'xxxxxxxxxxxxxxxxx';
-$settings['dbPW'] = 'xxxxxxxxxxxxxxxxx';
+$settings['server'] = getenv('DATABASE_HOST');
+$settings['dbName'] = getenv('DATABASE_NAME');
+$settings['dbUser'] = getenv('DATABASE_USER');
+$settings['dbPW'] = getenv('DATABASE_PASSWORD');
 
 // SETTINGS - SQL LOGIN DETAILS - END
 
@@ -55,7 +58,7 @@ if ($setup) {
 			."userID INT,"
 			."tSessionID INT,"
 			."PRIMARY KEY (id));";
-	createTable($db, "vsm_tBrowserSessions", $sql);
+	createTable($db, "vsm_tbrowsersessions", $sql);
 	
 	$sql = "CREATE TABLE <tablename> ("
 			."id int NOT NULL auto_increment,"
@@ -66,7 +69,7 @@ if ($setup) {
 			."salt VARCHAR(5),"
 			."rights INT(0),"   // 0: admin, 1: leader, 2: view only
 			."PRIMARY KEY (id));";
-	createTable($db, "vsm_tUser", $sql);
+	createTable($db, "vsm_tuser", $sql);
 
 	$sql = "CREATE TABLE <tablename> ("
 			."id int NOT NULL auto_increment,"
@@ -74,12 +77,12 @@ if ($setup) {
 			."server varchar(10),"
 			."gruppe varchar(10),"
 			."PRIMARY KEY (id));";
-	createTable($db, "vsm_tFilter", $sql);
+	createTable($db, "vsm_tfilter", $sql);
 
 	$pw = 'admin';
 	$salt = '28g7d';
 	$pwadd = md5($pw.$salt);
-	$sql = "INSERT INTO vsm_tUser (email, password, salt, rights)
+	$sql = "INSERT INTO vsm_tuser (email, password, salt, rights)
 			VALUES ('admin', '".$pwadd."', '".$salt."', 0);";
 
 	$db->execute($sql);

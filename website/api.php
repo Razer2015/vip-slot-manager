@@ -39,7 +39,7 @@ if (!isset($_POST['type'])) {
 		}
 		if ($tmp != '') $tmp = ' WHERE'.$tmp;
 			
-		$sql = "SELECT id, gametype, servergroup, playername, admin, status, timestamp, comment, TIMESTAMPDIFF(HOUR,UTC_TIMESTAMP(),timestamp) AS hour, TIMESTAMPDIFF(SECOND,UTC_TIMESTAMP(), timestamp) AS days FROM vsm_vips".$tmp." LIMIT 5000;";
+		$sql = "SELECT id, gametype, servergroup, playername, admin, status, timestamp, comment, TIMESTAMPDIFF(HOUR,UTC_TIMESTAMP(),timestamp) AS hour, TIMESTAMPDIFF(SECOND,UTC_TIMESTAMP(), timestamp) AS days, discord_id FROM vsm_vips".$tmp." LIMIT 5000;";
 
 		$dbr = $db->query($sql);
 		$erg = '{"data": [' . "\n";
@@ -86,8 +86,10 @@ if (!isset($_POST['type'])) {
 			if (strlen($player) > 15) $player = '<span title=\"'.$player.'\">'.mb_substr($player, 0, 15).'...</span>';
 			$admin = $row['admin'];
 			if (strlen($admin) > 15) $player = '<span title=\"'.$admin.'\">'.mb_substr($admin, 0, 15).'...</span>';
+
+			$discordId = $row['discord_id'];
 			
-			$tmp = '["'. ''. '", "'.$row['id'].'", "' . $row['gametype']. ' - '. $row['servergroup']. '", " '.$linkl.$player.$linkr.'", "<span title=\"'. $helper . '\" class=\"st_'.$row['status'].'\" >'.$row['status']. '</span> '. $tmp_time . '", "'. $admin . '", "'. $comment. '"]';
+			$tmp = '["'. ''. '", "'.$row['id'].'", "' . $row['gametype']. ' - '. $row['servergroup']. '", " '.$linkl.$player.$linkr.'", "<span title=\"'. $helper . '\" class=\"st_'.$row['status'].'\" >'.$row['status']. '</span> '. $tmp_time . '", "'. $admin . '", "'. $comment. '", "'. $discordId . '"]';
 			$i++;
 			$erg .= $tmp;	
 			if ($i < $m) $erg .= ',';	
@@ -101,7 +103,7 @@ if (!isset($_POST['type'])) {
 		if ($_GET['type'] == 'user') {
 			
 			if ($user->getRights() != 0) die();
-			$sql = "SELECT id, email, rights FROM vsm_tUser;";
+			$sql = "SELECT id, email, rights FROM vsm_tuser;";
 
 			$dbr = $db->query($sql);
 			$erg = '{"data": [' . "\n";
@@ -301,7 +303,8 @@ if (!isset($_POST['type'])) {
 		$tmp_date = escape($_POST['date']);
 		$farr = $db->real_escape_string(urldecode($_POST['farr']));
 		$status = $db->real_escape_string(urldecode($_POST['status']));
-		$comment = $db->real_escape_string(urldecode($_POST['comment']));		
+		$comment = $db->real_escape_string(urldecode($_POST['comment']));
+		$discordId = $db->real_escape_string(urldecode($_POST['discordId']));
 		$v = explode('#', $farr);
 		$v2 = explode(' - ', $v[0]);
 		$gametype = $v2[0];
@@ -346,7 +349,7 @@ if (!isset($_POST['type'])) {
 		if ($err == 'ok') {
 			$sql = "UPDATE vsm_vips SET gametype='".$gametype."', servergroup=".$servergroup.",
 						timestamp='".$tmp_date."', status='".$status."', admin='".$user->getMail()."',
-						comment='".$comment."' WHERE id=".$id.";";
+						comment='".$comment."', discord_id=".$discordId." WHERE id=".$id.";";
 			$db->execute($sql);
 		}
 		echo $err;
@@ -367,9 +370,10 @@ if (!isset($_POST['type'])) {
 	//	$status = $db->real_escape_string($_POST['status']);
 	//	$comment = $db->real_escape_string($_POST['comment']);
 
-				$farr = $db->real_escape_string(urldecode($_POST['farr']));
+		$farr = $db->real_escape_string(urldecode($_POST['farr']));
 		$status = $db->real_escape_string(urldecode($_POST['status']));
-		$comment = $db->real_escape_string(urldecode($_POST['comment']));		
+		$comment = $db->real_escape_string(urldecode($_POST['comment']));
+		$discordId = $db->real_escape_string(urldecode($_POST['discordId']));
 		
 		$v = explode('#', $farr);
 		if ($playername == '') $erg = 'err_nouser';
@@ -381,7 +385,7 @@ if (!isset($_POST['type'])) {
 				$erg = 'err_no_server';
 			} else {
 				
-				$sql = "SELECT id, TIMESTAMPDIFF(SECOND, UTC_TIMESTAMP(), '".$tmp_date."') AS diff FROM vsm_tUser WHERE id=".$user->getID().";";
+				$sql = "SELECT id, TIMESTAMPDIFF(SECOND, UTC_TIMESTAMP(), '".$tmp_date."') AS diff FROM vsm_tuser WHERE id=".$user->getID().";";
 				$dbr = $db->query($sql);
 				$row = $dbr->rewind();
 				$dateok = ($row['diff'] > 0);
@@ -412,8 +416,8 @@ if (!isset($_POST['type'])) {
 							$servergroup = $v2[1];
 							unset($v2);
 							if ($status == 'active') $status = 'adding';				
-							$sql = "INSERT INTO vsm_vips (gametype, servergroup, playername, timestamp, status, admin, comment)
-									VALUES ('".$gametype."', ".$servergroup.", '".$playername."', '".$tmp_date."', '".$status."', '".$user->getMail()."', '".$comment."');";
+							$sql = "INSERT INTO vsm_vips (gametype, servergroup, playername, timestamp, status, admin, comment, discord_id)
+									VALUES ('".$gametype."', ".$servergroup.", '".$playername."', '".$tmp_date."', '".$status."', '".$user->getMail()."', '".$comment."', ".$discordId.");";
 							$db->execute($sql);
 							$erg = "ok";
 						}
@@ -471,7 +475,7 @@ if (!isset($_POST['type'])) {
 	
 		$id = intval(escape(urldecode($_POST['id'])));
 		
-		$sql = "DELETE FROM vsm_tUser WHERE id=".$id.";";
+		$sql = "DELETE FROM vsm_tuser WHERE id=".$id.";";
 		$db->execute($sql);
 
 	}

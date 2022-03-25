@@ -23,7 +23,7 @@ $dadd2 = '0';
 $values['timestamp'] = 'date1';
 $values['comment'] = '';
 if ($edit) {
-	$sql = "SELECT id, status, playername, gametype, servergroup, TIMESTAMPDIFF(SECOND,'1970-01-01',timestamp) as timestamp2, TIMESTAMPDIFF(SECOND,'1970-01-01',UTC_TIMESTAMP()) as timestamp3, comment, TIMESTAMPDIFF(DAY,UTC_TIMESTAMP(),timestamp) AS days FROM vsm_vips WHERE id = ".$id.";";
+	$sql = "SELECT id, status, playername, gametype, servergroup, TIMESTAMPDIFF(SECOND,'1970-01-01',timestamp) as timestamp2, TIMESTAMPDIFF(SECOND,'1970-01-01',UTC_TIMESTAMP()) as timestamp3, comment, TIMESTAMPDIFF(DAY,UTC_TIMESTAMP(),timestamp) AS days, discord_id FROM vsm_vips WHERE id = ".$id.";";
 	
 	
 	$dbr = $db->query($sql);
@@ -42,6 +42,7 @@ if ($edit) {
 	$values['servergroup'] = $row['servergroup'];
 	$values['timestamp'] = 'date2';
 	$values['comment'] = $row['comment'];
+	$values['discordId'] = $row['discord_id'];
 
 	
 	$vstatus = ['', '', ''];
@@ -191,6 +192,13 @@ $settings['left'] .= '<div class="form-group row">
   <label for="name" class="col-lg-2">Comment:</label>
     <div class="col-lg-10">
 <textarea class="form-control" id="comment" rows="3" placeholder="(optional)">'.$values['comment'].'</textarea>
+    </div>
+</div>';
+
+$settings['left'] .= '<div class="form-group row">
+  <label for="name" class="col-lg-2">DiscordId:</label>
+    <div class="col-lg-10">
+<input class="form-control" id="discordId" type="number" placeholder="(optional)" value="'.$values['discordId'].'" />
     </div>
 </div>';
 
@@ -413,11 +421,12 @@ if (!$edit) {
 		var tmp_playername = encodeURIComponent(document.getElementById("playername").value);
 		var tmp_status =  encodeURIComponent($("select#status option:selected").attr("value"));
 		var tmp_comment = encodeURIComponent(document.getElementById("comment").value);
+		var tmp_discordId = encodeURIComponent(document.getElementById("discordId").value);
 
 		$.ajax({
 			type: "POST",
 			url: "api.php",
-			data: "type=insert&date="+tmp_date+"&farr="+farr+"&playername="+tmp_playername+"&status="+tmp_status+"&comment="+tmp_comment,				
+			data: "type=insert&date="+tmp_date+"&farr="+farr+"&playername="+tmp_playername+"&status="+tmp_status+"&comment="+tmp_comment+"&discordId="+tmp_discordId,				
 			cache: false,
 			success: function(html) {
 				if (html == "err_date") {
@@ -454,10 +463,11 @@ if (!$edit) {
 		var tmp_playername = encodeURIComponent(document.getElementById("playername").value);
 		var tmp_status =  encodeURIComponent($("select#status option:selected").attr("value"));
 		var tmp_comment = encodeURIComponent(document.getElementById("comment").value);
+		var tmp_discordId = encodeURIComponent(document.getElementById("discordId").value);
 		$.ajax({
 			type: "POST",
 			url: "api.php",
-			data: "type=change&date="+tmp_date+"&farr="+farr+"&id='.$id.'&status="+tmp_status+"&comment="+tmp_comment,				
+			data: "type=change&date="+tmp_date+"&farr="+farr+"&id='.$id.'&status="+tmp_status+"&comment="+tmp_comment+"&discordId="+tmp_discordId,				
 			cache: false,
 			success: function(html) {
 				if (html == "ok") {

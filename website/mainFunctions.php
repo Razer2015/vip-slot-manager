@@ -19,7 +19,7 @@ class GarbageCollection {
 	static function updateSessions(&$db, $logout = false) {
 		
 		// Ist die Session schon gespeichert?
-		$sql = "SELECT id FROM vsm_tBrowserSessions
+		$sql = "SELECT id FROM vsm_tbrowsersessions
 				WHERE sessionID = '".$_SESSION['id']."';";
 
 		$dbr = $db->query($sql);
@@ -29,7 +29,7 @@ class GarbageCollection {
 
 			$ref = 0;
 			
-			$sql = "INSERT INTO vsm_tBrowserSessions
+			$sql = "INSERT INTO vsm_tbrowsersessions
 					(sessionID, time)
 					VALUES ('".$_SESSION['id']."',".time().");";
 
@@ -39,7 +39,7 @@ class GarbageCollection {
 			
 			
 			// Wenn ja, Eintrag aktualisieren:
-			$sql = "UPDATE vsm_tBrowserSessions SET time=".time()." 
+			$sql = "UPDATE vsm_tbrowsersessions SET time=".time()." 
 					WHERE sessionID = '".$_SESSION['id']."';";
 		}
 		
@@ -56,7 +56,7 @@ class GarbageCollection {
 	*/
 	static function setSessionValue(&$db, $name, $value) {
 		updateSessions();
-		$sql = "UPDATE vsm_tBrowserSessions SET ".mysql_real_escape_string($name)."='".
+		$sql = "UPDATE vsm_tbrowsersessions SET ".mysql_real_escape_string($name)."='".
 				mysql_real_escape_string($value)."'".
 			   " WHERE sessionID = '".$_SESSION['id']."';";
 		$db->execute($sql);
@@ -69,13 +69,13 @@ class GarbageCollection {
 	static function collectGarbage(&$db) {
 
 		// Abgelaufende Browser-Sessions loeschen:
-		$sql = "DELETE FROM vsm_tBrowserSessions WHERE
+		$sql = "DELETE FROM vsm_tbrowsersessions WHERE
 				  ".time()." - time > ".GarbageCollection::$EXPIRATION_TIME_SECONDS.";";
 		$db->execute($sql);
 
 		// Zugehoerige Filter loeschen:
-		$sql = "DELETE vsm_tFilter FROM vsm_tFilter LEFT JOIN vsm_tBrowserSessions ON 
-				vsm_tFilter.userID = vsm_tBrowserSessions.userID WHERE vsm_tBrowserSessions.userID IS NULL;";
+		$sql = "DELETE vsm_tfilter FROM vsm_tfilter LEFT JOIN vsm_tbrowsersessions ON 
+				vsm_tfilter.userID = vsm_tbrowsersessions.userID WHERE vsm_tbrowsersessions.userID IS NULL;";
 				
 		$db->execute($sql);
 

@@ -23,10 +23,10 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `vsm_tBrowserSessions`
+-- Tabellenstruktur für Tabelle `vsm_tbrowsersessions`
 --
 
-CREATE TABLE IF NOT EXISTS `vsm_tBrowserSessions` (
+CREATE TABLE IF NOT EXISTS `vsm_tbrowsersessions` (
   `id` int(11) NOT NULL,
   `sessionID` varchar(250) NOT NULL,
   `time` int(11) NOT NULL,
@@ -39,10 +39,10 @@ CREATE TABLE IF NOT EXISTS `vsm_tBrowserSessions` (
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `vsm_tFilter`
+-- Tabellenstruktur für Tabelle `vsm_tfilter`
 --
 
-CREATE TABLE IF NOT EXISTS `vsm_tFilter` (
+CREATE TABLE IF NOT EXISTS `vsm_tfilter` (
   `id` int(11) NOT NULL,
   `userID` int(11) DEFAULT NULL,
   `server` varchar(10) DEFAULT NULL,
@@ -52,10 +52,10 @@ CREATE TABLE IF NOT EXISTS `vsm_tFilter` (
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `vsm_tUser`
+-- Tabellenstruktur für Tabelle `vsm_tuser`
 --
 
-CREATE TABLE IF NOT EXISTS `vsm_tUser` (
+CREATE TABLE IF NOT EXISTS `vsm_tuser` (
   `id` int(11) NOT NULL,
   `sessionID` varchar(250) DEFAULT NULL,
   `email` varchar(100) DEFAULT NULL,
@@ -86,21 +86,21 @@ CREATE TABLE IF NOT EXISTS `vsm_vips` (
 --
 
 --
--- Indizes für die Tabelle `vsm_tBrowserSessions`
+-- Indizes für die Tabelle `vsm_tbrowsersessions`
 --
-ALTER TABLE `vsm_tBrowserSessions`
+ALTER TABLE `vsm_tbrowsersessions`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indizes für die Tabelle `vsm_tFilter`
+-- Indizes für die Tabelle `vsm_tfilter`
 --
-ALTER TABLE `vsm_tFilter`
+ALTER TABLE `vsm_tfilter`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indizes für die Tabelle `vsm_tUser`
+-- Indizes für die Tabelle `vsm_tuser`
 --
-ALTER TABLE `vsm_tUser`
+ALTER TABLE `vsm_tuser`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -115,19 +115,19 @@ ALTER TABLE `vsm_vips`
 --
 
 --
--- AUTO_INCREMENT für Tabelle `vsm_tBrowserSessions`
+-- AUTO_INCREMENT für Tabelle `vsm_tbrowsersessions`
 --
-ALTER TABLE `vsm_tBrowserSessions`
+ALTER TABLE `vsm_tbrowsersessions`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 --
--- AUTO_INCREMENT für Tabelle `vsm_tFilter`
+-- AUTO_INCREMENT für Tabelle `vsm_tfilter`
 --
-ALTER TABLE `vsm_tFilter`
+ALTER TABLE `vsm_tfilter`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 --
--- AUTO_INCREMENT für Tabelle `vsm_tUser`
+-- AUTO_INCREMENT für Tabelle `vsm_tuser`
 --
-ALTER TABLE `vsm_tUser`
+ALTER TABLE `vsm_tuser`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 --
 -- AUTO_INCREMENT für Tabelle `vsm_vips`
@@ -139,8 +139,8 @@ ALTER TABLE `vsm_vips`
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 
 --
--- Daten für Tabelle `vsm_tUser`
+-- Daten für Tabelle `vsm_tuser`
 --
 
-INSERT INTO vsm_tUser (email, password, salt, rights) SELECT * FROM (SELECT 'admin', '8a2c156a7d5c76b1f9e4c75353627a3a', '28g7d', 0) AS tmp WHERE NOT EXISTS ( SELECT email FROM vsm_tUser ) LIMIT 1;
+INSERT INTO vsm_tuser (email, password, salt, rights) SELECT * FROM (SELECT 'admin', '8a2c156a7d5c76b1f9e4c75353627a3a', '28g7d', 0) AS tmp WHERE NOT EXISTS ( SELECT email FROM vsm_tuser ) LIMIT 1;
 -- --------------------------------------------------------

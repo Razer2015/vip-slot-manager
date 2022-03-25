@@ -1747,26 +1747,26 @@ private void TableBuilder() {
 							try {
 								string SqlTableBuild = String.Empty;
 								if (!TableExist) {
-									SqlTableBuild = "CREATE TABLE IF NOT EXISTS `vsm_tBrowserSessions` (id INT NOT NULL auto_increment,sessionID VARCHAR(250) NOT NULL,time INT NOT NULL,lockedUntil INT NOT NULL DEFAULT 0,error VARCHAR(300),userID INT,tSessionID INT,PRIMARY KEY (id))";
-									ConsoleWrite("[SQL-TableBuilder] [CreateTable] Plugin create NEW table 'vsm_tBrowserSessions' SQL database");
+									SqlTableBuild = "CREATE TABLE IF NOT EXISTS `vsm_tbrowsersessions` (id INT NOT NULL auto_increment,sessionID VARCHAR(250) NOT NULL,time INT NOT NULL,lockedUntil INT NOT NULL DEFAULT 0,error VARCHAR(300),userID INT,tSessionID INT,PRIMARY KEY (id))";
+									ConsoleWrite("[SQL-TableBuilder] [CreateTable] Plugin create NEW table 'vsm_tbrowsersessions' SQL database");
 									DebugWrite("^b[SQL-TableBuilder] [CreateTable] Connected to SQL.^n SQL COMMAND (MyCom): " + SqlTableBuild, 4);
 									using (MySqlCommand MyCom = new MySqlCommand(SqlTableBuild, Con)) {
 										MyCom.ExecuteNonQuery();
 									}
-									SqlTableBuild = "CREATE TABLE IF NOT EXISTS `vsm_tUser` (id int NOT NULL auto_increment,sessionID varchar(250),email varchar(100),password varchar(40),passwordDummy varchar(20),salt VARCHAR(5),rights INT(0),PRIMARY KEY (id))";
-									ConsoleWrite("[SQL-TableBuilder] [CreateTable] Plugin create NEW table 'vsm_tUser' in SQL database");
+									SqlTableBuild = "CREATE TABLE IF NOT EXISTS `vsm_tuser` (id int NOT NULL auto_increment,sessionID varchar(250),email varchar(100),password varchar(40),passwordDummy varchar(20),salt VARCHAR(5),rights INT(0),PRIMARY KEY (id))";
+									ConsoleWrite("[SQL-TableBuilder] [CreateTable] Plugin create NEW table 'vsm_tuser' in SQL database");
 									DebugWrite("^b[SQL-TableBuilder] [CreateTable] Connected to SQL.^n SQL COMMAND (MyCom): " + SqlTableBuild, 4);
 									using (MySqlCommand MyCom = new MySqlCommand(SqlTableBuild, Con)) {
 										MyCom.ExecuteNonQuery();
 									}
-									SqlTableBuild = "CREATE TABLE IF NOT EXISTS `vsm_tFilter` (id int NOT NULL auto_increment,userID INT,server varchar(10),gruppe varchar(10),PRIMARY KEY (id))";
-									ConsoleWrite("[SQL-TableBuilder] [CreateTable] Plugin create NEW table 'vsm_tFilter' in SQL database");
+									SqlTableBuild = "CREATE TABLE IF NOT EXISTS `vsm_tfilter` (id int NOT NULL auto_increment,userID INT,server varchar(10),gruppe varchar(10),PRIMARY KEY (id))";
+									ConsoleWrite("[SQL-TableBuilder] [CreateTable] Plugin create NEW table 'vsm_tfilter' in SQL database");
 									DebugWrite("^b[SQL-TableBuilder] [CreateTable] Connected to SQL.^n SQL COMMAND (MyCom): " + SqlTableBuild, 4);
 									using (MySqlCommand MyCom = new MySqlCommand(SqlTableBuild, Con)) {
 										MyCom.ExecuteNonQuery();
 									}
-									// SqlTableBuild = "INSERT INTO `vsm_tUser` (email, password, salt, rights) SELECT 'admin', '8a2c156a7d5c76b1f9e4c75353627a3a', '28g7d', 0 FROM DUAL WHERE 0 IN (SELECT COUNT(*) FROM `vsm_tUser`)";
-									SqlTableBuild = "INSERT INTO vsm_tUser (email, password, salt, rights) SELECT * FROM (SELECT 'admin', '8a2c156a7d5c76b1f9e4c75353627a3a', '28g7d', 0) AS tmp WHERE NOT EXISTS ( SELECT email FROM vsm_tUser ) LIMIT 1";
+									// SqlTableBuild = "INSERT INTO `vsm_tuser` (email, password, salt, rights) SELECT 'admin', '8a2c156a7d5c76b1f9e4c75353627a3a', '28g7d', 0 FROM DUAL WHERE 0 IN (SELECT COUNT(*) FROM `vsm_tuser`)";
+									SqlTableBuild = "INSERT INTO vsm_tuser (email, password, salt, rights) SELECT * FROM (SELECT 'admin', '8a2c156a7d5c76b1f9e4c75353627a3a', '28g7d', 0) AS tmp WHERE NOT EXISTS ( SELECT email FROM vsm_tuser ) LIMIT 1";
 									ConsoleWrite("[SQL-TableBuilder] [CreateWebAdmin] ^bLOGIN FOR FOR WEBSITE: user: admin , pw: admin^n");
 									using (MySqlCommand MyCom = new MySqlCommand(SqlTableBuild, Con)) {
 										MyCom.ExecuteNonQuery();
